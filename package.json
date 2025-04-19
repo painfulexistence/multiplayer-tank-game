@@ -1,0 +1,13 @@
+{
+  "name": "colyseus-excalibur-test",
+  "private": true,
+  "scripts": {
+    "dev": "bun run dev:client",
+    "dev:client": "cd client && bun run start",
+    "dev:server": "cd server && bun run start",
+    "dev:all": "bun run dev:client & bun run dev:server"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4"
+  }
+}
