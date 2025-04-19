@@ -1,7 +1,7 @@
 import { Room, Client } from "@colyseus/core";
 import { MyRoomState, Player, Enemy, Wall, Bullet } from "./schema/MyRoomState";
 import { Direction, Rect } from "../../../common/types";
-import { MAP_WIDTH, MAP_HEIGHT, PLAYER_SPAWN_POINTS, PLAYER_SPEED, BULLET_SPEED, ENEMY_SPEED, TANK_WIDTH, TANK_HEIGHT, WALL_WIDTH, WALL_HEIGHT, BULLET_WIDTH, BULLET_HEIGHT, BULLET_COOLDOWN_MAX, ENEMY_MOVE_TIMER_MAX } from "../../../common/settings";
+import { MAP_WIDTH, MAP_HEIGHT, PLAYER_SPAWN_POINTS, PLAYER_SPEED, BULLET_SPEED, ENEMY_SPEED, TANK_WIDTH, TANK_HEIGHT, WALL_WIDTH, WALL_HEIGHT, BULLET_WIDTH, BULLET_HEIGHT, BULLET_COOLDOWN_MAX, ENEMY_MOVE_TIMER_MAX, FRAME_TIME } from "../../../common/settings";
 
 export class MyRoom extends Room<MyRoomState> {
   state = new MyRoomState();
@@ -42,16 +42,16 @@ export class MyRoom extends Room<MyRoomState> {
       let newY = currPlayer.y;
       switch (message.direction) {
         case Direction.Up:
-          newY -= PLAYER_SPEED * (1000/60);
+          newY -= PLAYER_SPEED * FRAME_TIME;
           break;
         case Direction.Right:
-          newX += PLAYER_SPEED * (1000/60);
+          newX += PLAYER_SPEED * FRAME_TIME;
           break;
         case Direction.Down:
-          newY += PLAYER_SPEED * (1000/60);
+          newY += PLAYER_SPEED * FRAME_TIME;
           break;
         case Direction.Left:
-          newX -= PLAYER_SPEED * (1000/60);
+          newX -= PLAYER_SPEED * FRAME_TIME;
           break;
       }
 
@@ -90,7 +90,7 @@ export class MyRoom extends Room<MyRoomState> {
     });
 
     // Game loop
-    this.setSimulationInterval((dt: number) => this.update(dt));
+    this.setSimulationInterval((dt: number) => this.update(dt), FRAME_TIME);
   }
 
   private getRect(entity: { x: number; y: number, direction: Direction }, width: number, height: number): Rect {

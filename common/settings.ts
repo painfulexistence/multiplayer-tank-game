@@ -21,3 +21,5 @@ export const PLAYER_SPAWN_POINTS = [
     { x: 200, y: MAP_HEIGHT - TANK_WIDTH / 2 },
     { x: 800, y: MAP_HEIGHT - TANK_WIDTH / 2 },
 ];
+
+export const FRAME_TIME = 16.6;
