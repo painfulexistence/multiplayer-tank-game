@@ -1,27 +1,26 @@
-import { Client, Room, getStateCallbacks } from "colyseus.js";
+import { Client, type Room, getStateCallbacks } from "colyseus.js";
 import {
 	Actor,
-	DefaultLoader,
-	Engine,
-	ExcaliburGraphicsContext,
+	type DefaultLoader,
+	type Engine,
+	type ExcaliburGraphicsContext,
+	Keys,
 	Scene,
-	SceneActivationContext,
+	type SceneActivationContext,
 	Vector,
-	Keys
 } from "excalibur";
-import { MyRoomState } from "../../../server/src/rooms/schema/MyRoomState";
-import { Resources } from "../resources";
+import {
+	BULLET_HEIGHT,
+	BULLET_WIDTH,
+	TANK_HEIGHT,
+	TANK_WIDTH,
+	WALL_HEIGHT,
+	WALL_WIDTH,
+} from "../../../common/settings";
 import type { GameActivationData } from "../../../common/types";
 import { Direction } from "../../../common/types";
-import {
-    TANK_WIDTH,
-    TANK_HEIGHT,
-    BULLET_WIDTH,
-    BULLET_HEIGHT,
-    WALL_WIDTH,
-    WALL_HEIGHT,
-} from "../../../common/settings";
-
+import type { MyRoomState } from "../../../server/src/rooms/schema/MyRoomState";
+import { Resources } from "../resources";
 
 export class GameOnline extends Scene<GameActivationData> {
 	private room!: Room<MyRoomState>;
@@ -63,12 +62,12 @@ export class GameOnline extends Scene<GameActivationData> {
 					pos: new Vector(player.x, player.y),
 					width: TANK_WIDTH,
 					height: TANK_HEIGHT,
-					z: 2
+					z: 2,
 				});
 				playerActor.graphics.use(
-					sessionId === room.sessionId 
+					sessionId === room.sessionId
 						? Resources.tankGreen.toSprite()
-						: Resources.tankRed.toSprite()
+						: Resources.tankRed.toSprite(),
 				);
 				context.engine.add(playerActor);
 				this.players.set(sessionId, playerActor);
@@ -76,20 +75,20 @@ export class GameOnline extends Scene<GameActivationData> {
 				$(player).onChange(() => {
 					playerActor.pos.x = player.x;
 					playerActor.pos.y = player.y;
-                    switch (player.direction) {
-                    case Direction.Right:
-                        playerActor.rotation = 0;
-                        break;
-                    case Direction.Down:
-                        playerActor.rotation = Math.PI / 2;
-                        break;
-                    case Direction.Left:
-                        playerActor.rotation = Math.PI;
-                        break;
-                    case Direction.Up:
-                        playerActor.rotation = Math.PI * 3 / 2;
-                        break;
-                    }
+					switch (player.direction) {
+						case Direction.Right:
+							playerActor.rotation = 0;
+							break;
+						case Direction.Down:
+							playerActor.rotation = Math.PI / 2;
+							break;
+						case Direction.Left:
+							playerActor.rotation = Math.PI;
+							break;
+						case Direction.Up:
+							playerActor.rotation = (Math.PI * 3) / 2;
+							break;
+					}
 				});
 			});
 
@@ -107,7 +106,7 @@ export class GameOnline extends Scene<GameActivationData> {
 					pos: new Vector(enemy.x, enemy.y),
 					width: TANK_WIDTH,
 					height: TANK_HEIGHT,
-					z: 2
+					z: 2,
 				});
 				enemyActor.graphics.use(Resources.tankDark.toSprite());
 				context.engine.add(enemyActor);
@@ -116,21 +115,21 @@ export class GameOnline extends Scene<GameActivationData> {
 				$(enemy).onChange(() => {
 					enemyActor.pos.x = enemy.x;
 					enemyActor.pos.y = enemy.y;
-                    switch (enemy.direction) {
-                    case Direction.Right:
-                        enemyActor.rotation = 0;
-                        break;
-                    case Direction.Down:
-                        enemyActor.rotation = Math.PI / 2;
-                        break;
-                    case Direction.Left:
-                        enemyActor.rotation = Math.PI;
-                        break;
-                    case Direction.Up:
-                        enemyActor.rotation = Math.PI * 3 / 2;
-                        break;
-                    }
-                });
+					switch (enemy.direction) {
+						case Direction.Right:
+							enemyActor.rotation = 0;
+							break;
+						case Direction.Down:
+							enemyActor.rotation = Math.PI / 2;
+							break;
+						case Direction.Left:
+							enemyActor.rotation = Math.PI;
+							break;
+						case Direction.Up:
+							enemyActor.rotation = (Math.PI * 3) / 2;
+							break;
+					}
+				});
 			});
 
 			$(room.state).enemies.onRemove((enemy, id) => {
@@ -147,7 +146,7 @@ export class GameOnline extends Scene<GameActivationData> {
 					pos: new Vector(wall.x, wall.y),
 					width: WALL_WIDTH,
 					height: WALL_HEIGHT,
-					z: 0
+					z: 0,
 				});
 				wallActor.graphics.use(Resources.wall.toSprite());
 				context.engine.add(wallActor);
@@ -168,12 +167,12 @@ export class GameOnline extends Scene<GameActivationData> {
 					pos: new Vector(bullet.x, bullet.y),
 					width: BULLET_WIDTH,
 					height: BULLET_HEIGHT,
-					z: 1
+					z: 1,
 				});
 				bulletActor.graphics.use(
-					bullet.ownerId === room.sessionId 
+					bullet.ownerId === room.sessionId
 						? Resources.bulletBlue.toSprite()
-						: Resources.bulletRed.toSprite()
+						: Resources.bulletRed.toSprite(),
 				);
 				context.engine.add(bulletActor);
 				this.bullets.set(id, bulletActor);
@@ -181,20 +180,20 @@ export class GameOnline extends Scene<GameActivationData> {
 				$(bullet).onChange(() => {
 					bulletActor.pos.x = bullet.x;
 					bulletActor.pos.y = bullet.y;
-                    switch (bullet.direction) {
-                        case Direction.Right:
-                            bulletActor.rotation = 0;
-                            break;
-                        case Direction.Down:
-                            bulletActor.rotation = Math.PI / 2;
-                            break;
-                        case Direction.Left:
-                            bulletActor.rotation = Math.PI;
-                            break;
-                        case Direction.Up:
-                            bulletActor.rotation = Math.PI * 3 / 2;
-                            break;
-                        }
+					switch (bullet.direction) {
+						case Direction.Right:
+							bulletActor.rotation = 0;
+							break;
+						case Direction.Down:
+							bulletActor.rotation = Math.PI / 2;
+							break;
+						case Direction.Left:
+							bulletActor.rotation = Math.PI;
+							break;
+						case Direction.Up:
+							bulletActor.rotation = (Math.PI * 3) / 2;
+							break;
+					}
 				});
 			});
 
@@ -225,15 +224,27 @@ export class GameOnline extends Scene<GameActivationData> {
 		}
 
 		// Handle input
-        // TODO: handle multiple keys pressed
+		// TODO: handle multiple keys pressed
 		let direction: Direction | undefined;
-		if (engine.input.keyboard.isHeld(Keys.W) || engine.input.keyboard.isHeld(Keys.Up)) {
+		if (
+			engine.input.keyboard.isHeld(Keys.W) ||
+			engine.input.keyboard.isHeld(Keys.Up)
+		) {
 			direction = Direction.Up;
-		} else if (engine.input.keyboard.isHeld(Keys.D) || engine.input.keyboard.isHeld(Keys.Right)) {
+		} else if (
+			engine.input.keyboard.isHeld(Keys.D) ||
+			engine.input.keyboard.isHeld(Keys.Right)
+		) {
 			direction = Direction.Right;
-		} else if (engine.input.keyboard.isHeld(Keys.S) || engine.input.keyboard.isHeld(Keys.Down)) {
+		} else if (
+			engine.input.keyboard.isHeld(Keys.S) ||
+			engine.input.keyboard.isHeld(Keys.Down)
+		) {
 			direction = Direction.Down;
-		} else if (engine.input.keyboard.isHeld(Keys.A) || engine.input.keyboard.isHeld(Keys.Left)) {
+		} else if (
+			engine.input.keyboard.isHeld(Keys.A) ||
+			engine.input.keyboard.isHeld(Keys.Left)
+		) {
 			direction = Direction.Left;
 		}
 		if (direction !== undefined) {
@@ -271,7 +282,10 @@ export class GameOnline extends Scene<GameActivationData> {
 		// Called before Excalibur draws to the screen
 	}
 
-	override onPostDraw(ctx: ExcaliburGraphicsContext, elapsedMs: number): void {
+	override onPostDraw(
+		ctx: ExcaliburGraphicsContext,
+		elapsedMs: number,
+	): void {
 		// Called after Excalibur draws to the screen
 	}
 }

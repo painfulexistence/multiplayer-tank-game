@@ -1,10 +1,9 @@
 import {
 	Actor,
 	Color,
-	Engine,
+	type Engine,
 	Font,
 	FontUnit,
-	GoToOptions,
 	Label,
 	Scene,
 	TextAlign,
